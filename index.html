@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
+        <style type="text/css">
+            body{
+                background: #eee;
+            }
+            svg{
+                background:#fff;
+            }
+        </style>
+    </head>
+    <body>
+        <p>
+            Click Here!
+        </p>
+        <script type="text/javascript">
+            var width = 800;
+            var height = 500;            
+            var dataset  = [];                    
+
+            dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
+                           11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+
+       
+            var xScale = d3.scaleBand()
+                            .domain(d3.range(dataset.length))
+                            .rangeRound([0, width]).paddingInner( 0.1);
+
+            var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(dataset)])
+                            .range([0, height]);
+
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width",width)
+                        .attr("height",height);            
+                
+            svg.selectAll("rect")
+                .data(dataset)
+                .enter()
+                .append("rect")               
+                .attr("x", function(d, i){return xScale(i);})
+                .attr("y", function(d){return height- yScale(d);})
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d){return yScale(d);})
+                .attr("fill",  function(d){return "rgb(0,0,"+d*10+")";});
+
+            svg.selectAll("text")
+                .data(dataset)
+                .enter()
+                .append("text")      
+                .text(function(d){return d;})     
+                .attr("text-anchor", "middle")             
+                .attr("x", function(d, i){return xScale(i) + xScale.bandwidth() / 2;})
+                .attr("y", function(d){return height - yScale(d) + 14;})                
+                .attr("fill", "white");             
+                
+            d3.select("p")
+                .on("click", function(){
+                    dataset = [];
+                    for(var i=0; i<20; i++){
+                        dataset.push(Math.floor(Math.random()*40+10));
+                    }                    
+                    yScale = d3.scaleLinear()
+                            .domain([0, d3.max(dataset)])
+                            .range([0, height]);
+
+                    svg.selectAll("rect").data(dataset)
+                        .transition()
+                        .delay(function(d, i){return i*10})
+                        .duration(1000)                        
+                        .ease(d3.easeCircle)
+                        .attr("y", function(d){return height- yScale(d);})
+                        .attr("height", function(d){return yScale(d);})
+                        .attr("fill",  function(d){return "rgb(0,0,"+d*10+")";});
+                    
+                    svg.selectAll("text")
+                        .data(dataset)
+                        .transition()
+                        .delay(function(d, i){return i*10})
+                        .duration(1000)
+                        .text(function(d){return d;})                            
+                        .attr("x", function(d, i){return xScale(i) + xScale.bandwidth() / 2;})
+                        .attr("y", function(d){return height - yScale(d) + 14;});               
+console.log(11)                        
+                    
+                })    
+        </script>
+    </body>
+</html>
